@@ -1,0 +1,50 @@
+opensea 方案
+	1，用户需要创建一个集合，这里的话就要发行一个NFT合约
+		1）发行nft合约
+	2，用户在这个集合下创建单个的nft代币
+		1）调用创建元数据接口，得到元数据链接
+			元数据链接示例：ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/1
+			元数据内容示例：1{
+								"image":"ipfs://QmPbxeGcXhYQQNgsC6a36dDyYUcHgMLnGKnF8pVFmGsvqi",
+								"attributes":[
+										{"trait_type":"Mouth","value":"Grin"},
+										{"trait_type":"Clothes","value":"Vietnam Jacket"},
+										{"trait_type":"Background","value":"Orange"},
+										{"trait_type":"Eyes","value":"Blue Beams"},
+										{"trait_type":"Fur","value":"Robot"}]
+							}
+							
+							
+							
+							2{
+								"external_url": "https://discord.gg/nWJN2x3ntn",
+								"name": "Sharky #109",
+								"description": "⚠️Sharkies get old very fast and as they get old, the image gets transparent. 👻To keep them alive, you need to tweet about it every week including this message '#sharkpunks #sharky_109 @SharkpunksNFT https://api.sharkpunks.org/social/109'",
+								"image": "https://api.sharkpunks.org/images/109.png",
+								"attributes": [{
+									"display_type": "date",
+									"trait_type": "Date of death 👻",
+									"value": 1636585929
+								}, {
+									"trait_type": "Level",
+									"value": 0
+								}, {
+									"trait_type": "XP",
+									"value": 0
+								}]
+							}
+							
+							
+			
+		2）调用合约创建nft代币接口，传参为元数据链接
+		
+		
+	
+
+
+
+
+更简单的方案
+	opensea方案的第二步，所有用户共用一个NFT合约
+
+

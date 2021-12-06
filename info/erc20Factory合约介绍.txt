@@ -1,0 +1,20 @@
+发行代币工厂合约地址：
+
+	777测试网：0xE8348f96f18861766fFa6F2291b14ECE993cD486
+	63987正式网：0xaAf8c2990fD6F2072841fa57b1bb8d7F8Ae877Fa
+	bsc测试网：0x62B3B6DC0cF30360a50272e55350F2e5D44b399a
+	
+	
+	
+	使用方法：
+		1，调用工厂合约的createCoin方法
+			function createCoin(
+				string memory _name,//币名称
+				string memory _symbol,//币简称
+				uint8 _decimal,//小数位
+				uint256 _amount,//发行数量
+				bool _mintable,//是否能增发
+				address _owner//管理员地址
+			) 
+			
+		2，通过交易hash拿到具体的交易记录也就是transaction,从transaction里的event log里解析出发行代币的合约地址

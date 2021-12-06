@@ -1,0 +1,40 @@
+
+nex(nexus) 测试网
+
+chainId: 777
+
+节点：http://192.168.1.234:8545
+
+区块浏览器：http://192.168.1.147:4000/
+
+
+//交易模块
+wnex: 0xfa95376c1469063176Bfe1ee4D6A45CE094b03Ed
+
+nft-market:	0x3c4eAB11714CF172E63175F53aEa7dFED6A6Dc65
+
+BoredApeYachtClub NFT: 0x4698fD86b2A681502Ba297cCf6C7656081A7d14A
+
+RebelBots NFT：0x8A34e1DC8C2BB12577e0Ab2693F28D4a88240d63
+
+Doodles NFT: 0x59722EdF35BeaB7a15dE94DA54DeD4aFa927D285
+
+MekaVerse NFT: 0x029b73F797E33922D93a62ef58b0C407E7ab48Ac
+
+
+
+//创建模块
+写一个ERC721创建工厂合约
+再写个java服务，上传元数据到ipfs
+
+
+
+
+
+
+
+
+
+
+
+

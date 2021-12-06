@@ -1,0 +1,20 @@
+发行NFT工厂合约地址：
+
+	777测试网：0xf0b515aCb0cb703f8Bed3569C02B8A391Bdd2349
+	63987正式网：0x63513699a7db2b4511445ab83e8dc0ed00508c02
+	bsc测试网：0x7d17A97d1A928458b105217E37994aa6Ba0D3832
+	
+	
+	
+	使用方法：
+		1，调用工厂合约的createNft方法
+			function createNft(
+				string memory name,//名称
+				string memory symbol//简称
+			)
+			
+		2，通过交易hash拿到具体的交易记录也就是transaction,从transaction里的event log里解析出发行NFT的合约地址
+		
+	铸造单个nft的方法
+		1，调用创建元数据接口拿到元数据url（这个接口一般由后端程序提供）
+		2，调用NFT合于的mint方法参数为元数据url

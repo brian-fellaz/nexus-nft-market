@@ -1,0 +1,69 @@
+
+前端会用到的方法介绍：
+
+	//上架nft到交易市场
+	function addCollectionByFree(
+		address _collection
+	)
+
+	//使用bnb购买nft
+	function buyTokenUsingBNB(
+		address _collection,//nft的合约地址
+		uint256 _tokenId //nft id
+	)
+	
+	//使用wbnb购买nft
+	function buyTokenUsingWBNB(
+        address _collection,//nft的合约地址
+        uint256 _tokenId,//nft id
+        uint256 _price //价格
+    )
+	
+	//取消卖出挂单
+	function cancelAskOrder(
+		address _collection,//nft的合约地址
+		uint256 _tokenId//nft id
+	)
+	
+	//创建卖出挂单
+	function createAskOrder(
+        address _collection,//nft的合约地址
+        uint256 _tokenId,//nft id
+        uint256 _askPrice //价格
+    ) 
+	
+	//修改卖出挂单
+	function modifyAskOrder(
+        address _collection,//nft的合约地址
+        uint256 _tokenId,//nft id
+        uint256 _newPrice //新价格
+    )
+	
+	//返回指定nft的挂单情况
+	function viewAsksByCollectionAndTokenIds(
+		address collection,//nft的合约地址
+		uint256[] calldata tokenIds//nft id
+	)
+	
+	//分页查询指定集合的挂单情况
+	function viewAsksByCollection(
+        address collection,//nft的合约地址
+        uint256 cursor,//起始条数
+        uint256 size//查几条
+    )
+	
+	//分页查询指定用户指定集合的挂单情况
+	function viewAsksByCollectionAndSeller(
+        address collection,//nft的合约地址
+        address seller,//用户地址
+        uint256 cursor,//起始条数
+        uint256 size//查几条
+    )
+	
+	//分页查询所有集合
+	function viewCollections(
+		uint256 cursor,//起始条数
+        uint256 size//查几条
+	)
+	
+	
