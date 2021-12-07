@@ -1123,7 +1123,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         Close
     }
 
-    address public immutable WBNB;
+    address public immutable WNEX;
 
     uint256 public constant TOTAL_MAX_FEE = 1000; // 10% of a sale
 
@@ -1213,7 +1213,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         address buyer,
         uint256 askPrice,
         uint256 netPrice,
-        bool withBNB
+        bool withNEX
     );
 
     // Modifier for the admin
@@ -1231,21 +1231,21 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
      * @notice Constructor
      * @param _adminAddress: address of the admin
      * @param _treasuryAddress: address of the treasury
-     * @param _WBNBAddress: WBNB address
+     * @param _WNEXAddress: WNEX address
      * @param _minimumAskPrice: minimum ask price
      * @param _maximumAskPrice: maximum ask price
      */
     constructor(
         address _adminAddress,
         address _treasuryAddress,
-        address _WBNBAddress,
+        address _WNEXAddress,
         uint256 _minimumAskPrice,
         uint256 _maximumAskPrice,
         uint256 _tradingFee
     ) {
         require(_adminAddress != address(0), "Operations: Admin address cannot be zero");
         require(_treasuryAddress != address(0), "Operations: Treasury address cannot be zero");
-        require(_WBNBAddress != address(0), "Operations: WBNB address cannot be zero");
+        require(_WNEXAddress != address(0), "Operations: WNEX address cannot be zero");
         require(_minimumAskPrice > 0, "Operations: _minimumAskPrice must be > 0");
         require(_minimumAskPrice < _maximumAskPrice, "Operations: _minimumAskPrice < _maximumAskPrice");
         require(_tradingFee >= 0 && _tradingFee<= 500,"Operations: _tradingFee error");
@@ -1253,7 +1253,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         adminAddress = _adminAddress;
         treasuryAddress = _treasuryAddress;
 
-        WBNB = _WBNBAddress;
+        WNEX = _WNEXAddress;
 
         minimumAskPrice = _minimumAskPrice;
         maximumAskPrice = _maximumAskPrice;
@@ -1263,29 +1263,29 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Buy token with BNB by matching the price of an existing ask order
+     * @notice Buy token with NEX by matching the price of an existing ask order
      * @param _collection: contract address of the NFT
      * @param _tokenId: tokenId of the NFT purchased
      */
-    function buyTokenUsingBNB(address _collection, uint256 _tokenId) external payable nonReentrant {
-        // Wrap BNB
-        IWETH(WBNB).deposit{value: msg.value}();
+    function buyTokenUsingNEX(address _collection, uint256 _tokenId) external payable nonReentrant {
+        // Wrap NEX
+        IWETH(WNEX).deposit{value: msg.value}();
 
         _buyToken(_collection, _tokenId, msg.value, true);
     }
 
     /**
-     * @notice Buy token with WBNB by matching the price of an existing ask order
+     * @notice Buy token with WNEX by matching the price of an existing ask order
      * @param _collection: contract address of the NFT
      * @param _tokenId: tokenId of the NFT purchased
      * @param _price: price (must be equal to the askPrice set by the seller)
      */
-    function buyTokenUsingWBNB(
+    function buyTokenUsingWNEX(
         address _collection,
         uint256 _tokenId,
         uint256 _price
     ) external nonReentrant {
-        IERC20(WBNB).safeTransferFrom(address(msg.sender), address(this), _price);
+        IERC20(WNEX).safeTransferFrom(address(msg.sender), address(this), _price);
 
         _buyToken(_collection, _tokenId, _price, false);
     }
@@ -1319,7 +1319,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         require(revenueToClaim != 0, "Claim: Nothing to claim");
         pendingRevenue[msg.sender] = 0;
 
-        IERC20(WBNB).safeTransfer(address(msg.sender), revenueToClaim);
+        IERC20(WNEX).safeTransfer(address(msg.sender), revenueToClaim);
 
         emit RevenueClaim(msg.sender, revenueToClaim);
     }
@@ -1396,11 +1396,11 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
 
         _collections[_collection] = Collection({
             status: CollectionStatus.Open,
-            creatorAddress:   ,
+            creatorAddress: address(0),
             creatorFee: 0
         });
 
-        emit CollectionNew(_collection, _creator, _creatorFee);
+        emit CollectionNew(_collection, address(0), 0);
     }
 
     /**添加一个集合
@@ -1429,7 +1429,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
 
         _collections[_collection] = Collection({
             status: CollectionStatus.Open,
-            creatorAddress:   ,
+            creatorAddress: _creator,
             creatorFee: _creatorFee
         });
 
@@ -1510,7 +1510,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
      * @dev Callable by owner
      */
     function recoverFungibleTokens(address _token) external onlyOwner {
-        require(_token != WBNB, "Operations: Cannot recover WBNB");
+        require(_token != WNEX, "Operations: Cannot recover WNEX");
         uint256 amountToRecover = IERC20(_token).balanceOf(address(this));
         require(amountToRecover != 0, "Operations: No token to recover");
 
@@ -1708,28 +1708,20 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         return (_calculatePriceAndFeesForCollection(collection, price));
     }
 
-    /**这块的业务逻辑暂不清楚，里面调用了collection里的配置，去查询能否list,应该是一个特殊要求
-     * @notice Checks if an array of tokenIds can be listed
-     * @param _collection: address of the collection
-     * @param _tokenIds: array of tokenIds
-     * @dev if collection is not for trading, it returns array of bool with false
+    /**
+     * 查询系列是否上架
      */
-    function canTokensBeListed(address _collection, uint256[] calldata _tokenIds)
+    function collectionIsList(address _collection)
         external
         view
-        returns (bool[] memory listingStatuses)
+        returns (bool isList)
     {
-        listingStatuses = new bool[](_tokenIds.length);
+        isList = true;
 
         if (_collections[_collection].status != CollectionStatus.Open) {
-            return listingStatuses;
+            isList = false;
         }
-
-        for (uint256 i = 0; i < _tokenIds.length; i++) {
-            listingStatuses[i] = _canTokenBeListed(_collection, _tokenIds[i]);
-        }
-
-        return listingStatuses;
+        return isList;
     }
 
     /**
@@ -1737,13 +1729,13 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
      * @param _collection: contract address of the NFT
      * @param _tokenId: tokenId of the NFT purchased
      * @param _price: price (must match the askPrice from the seller)
-     * @param _withBNB: whether the token is bought with BNB (true) or WBNB (false)
+     * @param _withNEX: whether the token is bought with NEX (true) or WNEX (false)
      */
     function _buyToken(
         address _collection,
         uint256 _tokenId,
         uint256 _price,
-        bool _withBNB
+        bool _withNEX
     ) internal {
         require(_collections[_collection].status == CollectionStatus.Open, "Collection: Not for trading");
         require(_askTokenIds[_collection].contains(_tokenId), "Buy: Not for sale");
@@ -1765,8 +1757,8 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         delete _askDetails[_collection][_tokenId];
         _askTokenIds[_collection].remove(_tokenId);
 
-        // Transfer WBNB
-        IERC20(WBNB).safeTransfer(askOrder.seller, netPrice);
+        // Transfer WNEX
+        IERC20(WNEX).safeTransfer(askOrder.seller, netPrice);
 
         // Update pending revenues for treasury/creator (if any!)
         if (creatorFee != 0) {
@@ -1782,7 +1774,7 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         IERC721(_collection).safeTransferFrom(address(this), address(msg.sender), _tokenId);
 
         // Emit event
-        emit Trade(_collection, _tokenId, askOrder.seller, msg.sender, _price, netPrice, _withBNB);
+        emit Trade(_collection, _tokenId, askOrder.seller, msg.sender, _price, netPrice, _withNEX);
     }
 
     /**
@@ -1807,13 +1799,5 @@ contract ERC721NFTMarketV1 is ERC721Holder, Ownable, ReentrancyGuard {
         return (netPrice, tradingFee, creatorFee);
     }
 
-    /**
-     * @notice Checks if a token can be listed
-     * @param _collection: address of the collection
-     * @param _tokenId: tokenId
-     */
-    function _canTokenBeListed(address _collection, uint256 _tokenId) internal view returns (bool) {
 
-        return true;
-    }
 }

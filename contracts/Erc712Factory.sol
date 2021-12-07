@@ -1969,7 +1969,7 @@ contract Erc721Nft is ERC721, Ownable, Initializable {
         _symbol = symbol;
     }
 
-    function mint(string memory tokenURI) external {
+    function mint(string memory tokenURI) external onlyOwner {
        uint supply = totalSupply();
        _safeMint(msg.sender, supply + 1);
        _setTokenURI(supply + 1, tokenURI);
@@ -1985,16 +1985,27 @@ pragma solidity ^0.7.0;
 
 contract Erc712Factory {
 
-  event NewNft(address nft);
 
-  function createNft(string memory name,string memory symbol) external returns(address nft){
 
-      bytes memory bytecode = type(Erc721Nft).creationCode;
-      bytes32 salt = keccak256(abi.encodePacked(name, symbol));
-      assembly {
-          nft := create2(0, add(bytecode, 32), mload(bytecode), salt)
-      }
-      Erc721Nft(nft).initialize(name, symbol);
-      emit NewNft(nft);
-  }
+    mapping(address => address) private creators;//nft address => creator
+
+
+    event NewNft(address nft);
+
+    function createNft(string memory name,string memory symbol) external returns(address nft){
+
+        bytes memory bytecode = type(Erc721Nft).creationCode;
+        bytes32 salt = keccak256(abi.encodePacked(name, symbol));
+        assembly {
+            nft := create2(0, add(bytecode, 32), mload(bytecode), salt)
+        }
+        Erc721Nft(nft).initialize(name, symbol);
+        Erc721Nft(nft).transferOwnership(msg.sender);
+        creators[nft] = msg.sender;
+        emit NewNft(nft);
+    }
+
+    function viewNftCreator(address nft) external view returns(address creator){
+        return creators[nft];
+    }
 }

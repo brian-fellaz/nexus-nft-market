@@ -3,13 +3,13 @@ nex(nexus) 测试网
 
 chainId: 777
 
-节点：http://192.168.1.234:8545
+节点：https://test-geth.uinvent.cn
 
-区块浏览器：http://192.168.1.147:4000/
+区块浏览器：https://test.mscscan.io/
 
 
 //交易模块
-wnex: 0xfa95376c1469063176Bfe1ee4D6A45CE094b03Ed
+//wnex: 0xfa95376c1469063176Bfe1ee4D6A45CE094b03Ed
 
 nft-market:	0x3c4eAB11714CF172E63175F53aEa7dFED6A6Dc65
 
